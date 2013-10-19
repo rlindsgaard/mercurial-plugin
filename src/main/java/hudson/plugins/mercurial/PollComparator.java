@@ -14,7 +14,7 @@ import hudson.model.TaskListener;
 import hudson.scm.PollingResult.Change;
 import hudson.scm.SCM;
 
-public class PollComparator implements ExtensionPoint {
+public abstract class PollComparator implements ExtensionPoint {
 	
 	public Change compare(SCM scm, Launcher launcher, TaskListener listener, MercurialTagAction baseline, PrintStream output, Node node, FilePath repository, AbstractProject<?,?> project) 
 			throws IOException, InterruptedException {
