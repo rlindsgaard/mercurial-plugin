@@ -12,16 +12,17 @@ import hudson.model.Hudson;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.scm.PollingResult.Change;
+import hudson.scm.SCM;
 
-public class CompareSubscriber implements ExtensionPoint {
+public class PollComparator implements ExtensionPoint {
 	
-	public Change compare(Launcher launcher, TaskListener listener, MercurialTagAction baseline, PrintStream output, Node node, FilePath repository, AbstractProject<?,?> project) 
+	public Change compare(SCM scm, Launcher launcher, TaskListener listener, MercurialTagAction baseline, PrintStream output, Node node, FilePath repository, AbstractProject<?,?> project) 
 			throws IOException, InterruptedException {
 		return Change.NONE;
 	}
 	
-	public static ExtensionList<CompareSubscriber> all() {
-        return Hudson.getInstance().getExtensionList(CompareSubscriber.class);
+	public static ExtensionList<PollComparator> all() {
+        return Hudson.getInstance().getExtensionList(PollComparator.class);
     }
 	
 }
