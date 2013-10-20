@@ -301,7 +301,7 @@ public class MercurialSCM extends SCM implements Serializable {
         	
         	for(PollComparator s : PollComparator.all()) {
         		Change c = s.compare(this, launcher, listener, baseline, output, node, repository, project);
-        		if(change.compareTo(c) > 0){
+        		if(c.compareTo(change) > 0){
         			change = c;
         		}
         	}
