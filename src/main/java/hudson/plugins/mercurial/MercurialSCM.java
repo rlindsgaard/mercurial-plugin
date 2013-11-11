@@ -299,7 +299,7 @@ public class MercurialSCM extends SCM implements Serializable {
         	//Check to see if any extension point wish to trigger a build
         	Change change = Change.NONE;
         	
-        	for(PollComparator s : PollComparator.all()) {
+        	for(AbstractComparator s : AbstractComparator.all()) {
         		Change c = s.compare(this, launcher, listener, baseline, output, node, repository, project);
         		if(c.compareTo(change) > 0){
         			change = c;
