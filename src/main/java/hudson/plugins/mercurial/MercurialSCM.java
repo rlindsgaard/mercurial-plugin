@@ -290,19 +290,36 @@ public class MercurialSCM extends SCM implements Serializable {
         String _branch = getBranchExpanded(project);
         String remote = hg.tip(repository, _branch);
         String rev = hg.tipNumber(repository, _branch);
-        if (remote == null) {
-            throw new IOException("failed to find ID of branch head");
-        }
-        if (rev == null) {
-            throw new IOException("failed to find revision of branch head");
-        }
-        if (remote.equals(baseline.id)) { // shortcut
-            return new PollingResult(baseline, new MercurialTagAction(remote, rev, subdir), Change.NONE);
-        }
-        Set<String> changedFileNames = parseStatus(hg.popen(repository, listener, false, new ArgumentListBuilder("status", "--rev", baseline.id, "--rev", remote)));
+        
+    	Change change = null;
+    	
+    	for(AbstractComparator s : AbstractComparator.all()) {
+    		Change c = s.compare(this, launcher, listener, baseline, output, node, repository, project);
+    		
+    		if(c != null) {
+    			if(change == null || c.compareTo(change) > 0){
+    				change = c;
+    			}
+    		}
+    	}
+    	
+    	if(change != null) {
+    		return new PollingResult(baseline, new MercurialTagAction(remote, rev, subdir), change);
+    	}
+		if (remote == null) {
+	        throw new IOException("failed to find ID of branch head");
+	    }
+	    if (rev == null) {
+	        throw new IOException("failed to find revision of branch head");
+	    }
+	    if (remote.equals(baseline.id)) { 
+	    	
+	        return new PollingResult(baseline, new MercurialTagAction(remote, rev, subdir), Change.NONE);
+	    }
+	    Set<String> changedFileNames = parseStatus(hg.popen(repository, listener, false, new ArgumentListBuilder("status", "--rev", baseline.id, "--rev", remote)));
 
-        MercurialTagAction cur = new MercurialTagAction(remote, rev, subdir);
-        return new PollingResult(baseline,cur,computeDegreeOfChanges(changedFileNames,output));
+	    MercurialTagAction cur = new MercurialTagAction(remote, rev, subdir);
+	    return new PollingResult(baseline,cur,computeDegreeOfChanges(changedFileNames,output));
     }
 
     static Set<String> parseStatus(String status) {
